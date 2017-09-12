@@ -22,11 +22,25 @@
         android:drawablePadding="3dp"
         android:clickable="true"
         android:textColor="@drawable/search_text_selector"/>
-    <ImageView
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/ic_topbanner_game"
-        android:layout_marginLeft="8dp"/>
+        android:layout_marginLeft="8dp">
+        <ImageView
+            android:id="@+id/game_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:background="@drawable/ic_topbanner_game"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignRight="@+id/game_iv"
+            android:drawableRight="@drawable/mian_game_shape"/>
+    </RelativeLayout>
+
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

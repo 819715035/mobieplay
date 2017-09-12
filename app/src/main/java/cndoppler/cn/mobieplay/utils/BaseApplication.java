@@ -24,7 +24,7 @@ public class BaseApplication extends Application {
         super.onCreate();
 
         application = this;
-        CrashHandler.getInstance().init(this);
+        //CrashHandler.getInstance().init(this);
     }
 
 

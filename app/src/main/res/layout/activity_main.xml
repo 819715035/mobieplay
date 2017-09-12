@@ -8,19 +8,36 @@
         layout="@layout/titlebar">
     </include>
     <FrameLayout
+        android:id="@+id/main_content_fl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"></FrameLayout>
     <RadioGroup
+        android:id="@+id/main_rg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#11000000"
         android:padding="3dp"
         android:orientation="horizontal">
         <RadioButton
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:id="@+id/video_rb"
+           style="@style/MainRadioButtonStyle"
+            android:drawableTop="@drawable/main_rb_video_selector"
             android:text="本地视频"/>
+        <RadioButton
+            android:id="@+id/audio_rb"
+            style="@style/MainRadioButtonStyle"
+            android:drawableTop="@drawable/main_rb_audio_selector"
+            android:text="本地音乐"/>
+        <RadioButton
+            android:id="@+id/netvideo_rb"
+            style="@style/MainRadioButtonStyle"
+            android:drawableTop="@drawable/main_rb_netvideo_selector"
+            android:text="网络视频"/>
+        <RadioButton
+            android:id="@+id/netaudio_rb"
+            style="@style/MainRadioButtonStyle"
+            android:drawableTop="@drawable/mian_rb_netaudio_selector"
+            android:text="网络音乐"/>
     </RadioGroup>
 </LinearLayout>
