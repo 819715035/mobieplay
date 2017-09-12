@@ -8,7 +8,7 @@ import cndoppler.cn.mobieplay.utils.BaseActivity;
 public class WelcomActivity extends BaseActivity {
 
     private Handler handler = new Handler();
-    private boolean isMainActivity;
+    private boolean isMainActivity = false;
     @Override
     public void setContent() {
         setContentView(R.layout.activity_welcom);

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="55dp"
+    android:background="#ff3097fd"
+    android:gravity="center_vertical">
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:src="@drawable/ic_topbanner_logo"
+        />
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="全网搜索"
+        android:background="@drawable/search_selector"
+        android:drawableLeft="@drawable/search_drawable_selector"
+        android:layout_marginLeft="8dp"
+        android:layout_weight="1"
+        android:paddingLeft="8dp"
+        android:drawablePadding="3dp"
+        android:clickable="true"
+        android:textColor="@drawable/search_text_selector"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_topbanner_game"
+        android:layout_marginLeft="8dp"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:background="@drawable/ic_topbanner_record"
+        android:layout_marginRight="8dp"/>
+</LinearLayout>
