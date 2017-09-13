@@ -77,9 +77,12 @@ public class MainActivity extends BaseActivity {
 
     private BasePager getPager() {
         BasePager pager = pagers.get(position);
-        if (pager!=null && pager.isData){
-            pager.initData();
-            pager.isData = true;
+        if (pager!=null){
+            //如果已经更新过则不在加载数据
+            if (!pager.isData){
+                pager.initData();
+                pager.isData = true;
+            }
             return pager;
         }
         return null;
