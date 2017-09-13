@@ -2,20 +2,23 @@ package cndoppler.cn.mobieplay.pager;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import cndoppler.cn.mobieplay.R;
+import cndoppler.cn.mobieplay.activity.VideoPlayActivity;
+import cndoppler.cn.mobieplay.adapter.VideoPagerAdapter;
 import cndoppler.cn.mobieplay.bean.VideoData;
 import cndoppler.cn.mobieplay.utils.BasePager;
 import cndoppler.cn.mobieplay.utils.LogUtils;
@@ -30,7 +33,7 @@ public class VideoPager extends BasePager {
     private TextView noneVideoTv;
     private ProgressBar loadingPb;
     private ListView videoLV;
-    private List<VideoData> videos;
+    private ArrayList<VideoData> videos;
     private Handler handler = new MyHandler();
 
     public VideoPager(Context context) {
@@ -43,6 +46,15 @@ public class VideoPager extends BasePager {
         noneVideoTv = view.findViewById(R.id.nonevideo_tv);
         loadingPb = view.findViewById(R.id.loading_pb);
         videoLV = view.findViewById(R.id.video_lv);
+        videoLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                //调用系统的播放
+                Intent intent = new Intent(context, VideoPlayActivity.class);
+                intent.putExtra("uri",videos.get(i).getUrl());
+                context.startActivity(intent);
+            }
+        });
         return view;
     }
 
@@ -103,7 +115,8 @@ public class VideoPager extends BasePager {
                 //得到视频数据
                 //把文本隐藏
                 noneVideoTv.setVisibility(View.GONE);
-                ToastUtils.showToastShort(context,"有数据");
+                VideoPagerAdapter adapter = new VideoPagerAdapter(context,videos,true);
+                videoLV.setAdapter(adapter);
             }else{
                 //没有视频
                 //把文本显示

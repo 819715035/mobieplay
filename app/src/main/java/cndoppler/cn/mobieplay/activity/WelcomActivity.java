@@ -1,8 +1,9 @@
-package cndoppler.cn.mobieplay;
+package cndoppler.cn.mobieplay.activity;
 
 import android.os.Handler;
 import android.view.MotionEvent;
 
+import cndoppler.cn.mobieplay.R;
 import cndoppler.cn.mobieplay.utils.BaseActivity;
 
 public class WelcomActivity extends BaseActivity {

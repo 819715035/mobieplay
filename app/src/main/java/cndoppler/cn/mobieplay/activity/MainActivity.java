@@ -1,4 +1,4 @@
-package cndoppler.cn.mobieplay;
+package cndoppler.cn.mobieplay.activity;
 
 import android.support.annotation.IdRes;
 import android.support.v4.app.FragmentManager;
@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentTransaction;
 import android.widget.RadioGroup;
 import java.util.ArrayList;
 import java.util.List;
+
+import cndoppler.cn.mobieplay.R;
 import cndoppler.cn.mobieplay.pager.AudioPager;
 import cndoppler.cn.mobieplay.pager.NetAudioPager;
 import cndoppler.cn.mobieplay.pager.NetVideoPager;
