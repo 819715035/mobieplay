@@ -20,5 +20,5 @@
         android:visibility="gone"></include>
     <include android:id="@+id/loading_layout"
         layout="@layout/layout_loading"
-        ></include>
+        android:visibility="gone"></include>
 </RelativeLayout>

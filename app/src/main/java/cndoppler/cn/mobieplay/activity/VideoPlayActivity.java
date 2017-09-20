@@ -459,7 +459,6 @@ public class VideoPlayActivity extends BaseActivity {
     private void nextVideo() {
         videoPosition++;
         playVideo();
-        loadingLayout.setVisibility(View.VISIBLE);
     }
 
 
@@ -470,16 +469,16 @@ public class VideoPlayActivity extends BaseActivity {
     private void preVideo() {
         videoPosition--;
         playVideo();
-        loadingLayout.setVisibility(View.VISIBLE);
     }
 
     /**
      * 播放视频
      */
     private void playVideo() {
-        if (videoPosition<0 && videoPosition>videoDatas.size()-1){
+        if (videoPosition<0 || videoPosition>videoDatas.size()-1){
             return;
         }
+        loadingLayout.setVisibility(View.VISIBLE);
         VideoData video = videoDatas.get(videoPosition);
         videoPlayView.setVideoURI(Uri.parse(video.getUrl()));
         //设置名字
@@ -659,10 +658,26 @@ public class VideoPlayActivity extends BaseActivity {
             tvBattery.setBackgroundResource(R.drawable.ic_battery_100);
         }
     }
-
+    float startY = 0;
+    float toundRang = 0;
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         detector.onTouchEvent(event);
+        switch (event.getAction()){
+            case MotionEvent.ACTION_DOWN:
+                startY = event.getY();
+                toundRang = Math.min(screenWidth,screenHeight);
+                break;
+            case MotionEvent.ACTION_MOVE:
+                float endY = event.getY();
+                float spaceY = endY - startY;
+                //音量调节
+                currentAudio = (int) Math.min(tempVolume - spaceY / toundRang * maxAudio, maxAudio);
+                updateVolume();
+                break;
+            case MotionEvent.ACTION_UP:
+                break;
+        }
         return super.onTouchEvent(event);
     }
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import cndoppler.cn.mobieplay.R;
+import cndoppler.cn.mobieplay.activity.VideoPlayActivity;
 import cndoppler.cn.mobieplay.adapter.VideoPagerAdapter;
 import cndoppler.cn.mobieplay.bean.VideoData;
 import cndoppler.cn.mobieplay.utils.BasePager;
@@ -52,15 +54,15 @@ public class VideoPager extends BasePager {
                 /*Intent intent = new Intent(context, VideoPlayActivity.class);
                 intent.putExtra("uri",videos.get(i).getUrl());
                 context.startActivity(intent);*/
-                /*Intent intent = new Intent(context, VideoPlayActivity.class);
+                Intent intent = new Intent(context, VideoPlayActivity.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("videolist",videos);
                 bundle.putInt("position",i);
                 intent.putExtras(bundle);
-                context.startActivity(intent);*/
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"),"video/*");
                 context.startActivity(intent);
+                /*Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"),"video*//*");
+                context.startActivity(intent);*/
 
             }
         });
