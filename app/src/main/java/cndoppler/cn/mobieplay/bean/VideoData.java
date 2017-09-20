@@ -1,10 +1,12 @@
 package cndoppler.cn.mobieplay.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by Administrator on 2017/9/13 0013.
  */
 
-public class VideoData {
+public class VideoData implements Serializable {
     private String name;
     private long time;
     private long size;

@@ -22,13 +22,15 @@
                 android:layout_weight="1"
                 android:text="视频名称"
                 android:textColor="#ffffff" />
-
-            <ImageView
-                android:id="@+id/iv_battery"
+            <TextView
+                android:id="@+id/tv_battery"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="8dp"
-                android:src="@drawable/ic_battery_10" />
+                android:padding="5dp"
+                android:text="10%"
+                android:textColor="#ffffff"
+                android:background="@drawable/ic_battery_10" />
 
             <TextView
                 android:id="@+id/tv_system_time"

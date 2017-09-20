@@ -3,8 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#000000"
     tools:context="cndoppler.cn.mobieplay.activity.VideoPlayActivity">
-    <VideoView
+
+    <cndoppler.cn.mobieplay.widget.MyVideoView
+        android:layout_centerInParent="true"
         android:id="@+id/videopaly_vv"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
