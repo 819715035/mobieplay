@@ -15,4 +15,10 @@
         android:id="@+id/video_control"
         layout="@layout/mideocontrol_layout">
     </include>
+    <include android:id="@+id/buffer_ll"
+        layout="@layout/layout_buffer"
+        android:visibility="gone"></include>
+    <include android:id="@+id/loading_layout"
+        layout="@layout/layout_loading"
+        ></include>
 </RelativeLayout>

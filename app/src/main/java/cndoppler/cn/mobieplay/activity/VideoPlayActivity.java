@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.util.DisplayMetrics;
@@ -30,6 +31,9 @@ import cndoppler.cn.mobieplay.utils.ToastUtils;
 import cndoppler.cn.mobieplay.utils.Utils;
 import cndoppler.cn.mobieplay.widget.MyVideoView;
 
+import static android.media.MediaPlayer.MEDIA_INFO_BUFFERING_END;
+import static android.media.MediaPlayer.MEDIA_INFO_BUFFERING_START;
+
 public class VideoPlayActivity extends BaseActivity {
 
     private MyVideoView videoPlayView;
@@ -50,6 +54,10 @@ public class VideoPlayActivity extends BaseActivity {
     private Button btnVideoNext;
     private Button btnVideoSiwchScreen;
     private View controlLayout;
+    private View bufferLayout;
+    private View loadingLayout;
+    private TextView loadingTv;
+    private TextView bufferTv;
     private Handler handler;
     /**
      * 视频进度的更新
@@ -95,6 +103,8 @@ public class VideoPlayActivity extends BaseActivity {
     private boolean isMute;
     private Uri uri; //视频链接
     private boolean isNetUri;
+    private int precurrentPosition;
+    private boolean isUseSystem = true;//是否使用系统的监听卡
 
     @Override
     public void setContent() {
@@ -103,6 +113,10 @@ public class VideoPlayActivity extends BaseActivity {
 
     @Override
     public void initWidget() {
+        loadingLayout = findViewById(R.id.loading_layout);
+        loadingTv = findViewById(R.id.tv_laoding_netspeed);
+        bufferLayout = findViewById(R.id.buffer_ll);
+        bufferTv = findViewById(R.id.buffer_tv);
         controlLayout = findViewById(R.id.video_control);
         llTop = findViewById( R.id.ll_top );
         tvName = findViewById( R.id.tv_name );
@@ -148,6 +162,8 @@ public class VideoPlayActivity extends BaseActivity {
         maxAudio = am.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         seekbarVoice.setMax(maxAudio);
         seekbarVoice.setProgress(currentAudio);
+        //开始更新网络速度
+        handler.sendEmptyMessage(SHOW_SPEED);
     }
 
     /**
@@ -201,6 +217,8 @@ public class VideoPlayActivity extends BaseActivity {
                 seekbarVideo.setMax(mediaPlayer.getDuration());
                 //更新文本时长
                 tvDuration.setText(utils.stringForTime(mediaPlayer.getDuration()));
+                //隐藏加载页
+                loadingLayout.setVisibility(View.GONE);
                 //发送消息
                 handler.sendEmptyMessage(PROGRESS);
                 hideControlLayout();
@@ -224,6 +242,7 @@ public class VideoPlayActivity extends BaseActivity {
             @Override
             public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
                 ToastUtils.showToastShort(VideoPlayActivity.this,"该视频无法播放");
+                loadingLayout.setVisibility(View.GONE);
                 return true;
             }
         });
@@ -368,6 +387,26 @@ public class VideoPlayActivity extends BaseActivity {
                 hideControlLayout();
             }
         });
+
+        /**
+         * 监听卡
+         */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            videoPlayView.setOnInfoListener(new MediaPlayer.OnInfoListener() {
+                @Override
+                public boolean onInfo(MediaPlayer mediaPlayer, int what, int i1) {
+                    switch (what){
+                        case MEDIA_INFO_BUFFERING_START:
+                            bufferLayout.setVisibility(View.VISIBLE);
+                            break;
+                        case MEDIA_INFO_BUFFERING_END:
+                            bufferLayout.setVisibility(View.GONE);
+                            break;
+                    }
+                    return false;
+                }
+            });
+        }
     }
 
     /**
@@ -420,6 +459,7 @@ public class VideoPlayActivity extends BaseActivity {
     private void nextVideo() {
         videoPosition++;
         playVideo();
+        loadingLayout.setVisibility(View.VISIBLE);
     }
 
 
@@ -430,6 +470,7 @@ public class VideoPlayActivity extends BaseActivity {
     private void preVideo() {
         videoPosition--;
         playVideo();
+        loadingLayout.setVisibility(View.VISIBLE);
     }
 
     /**
@@ -513,6 +554,36 @@ public class VideoPlayActivity extends BaseActivity {
                     tvCurrentTime.setText(utils.stringForTime(currentPosition));
                     //设置系统时间
                     tvSystemTime.setText(getSysteTime());
+                    //缓存进度的更新
+                    if (isNetUri) {
+                        //只有网络资源才有缓存效果
+                        int buffer = videoPlayView.getBufferPercentage();//0~100
+                        int totalBuffer = buffer * seekbarVideo.getMax();
+                        int secondaryProgress = totalBuffer / 100;
+                        seekbarVideo.setSecondaryProgress(secondaryProgress);
+                    } else {
+                        //本地视频没有缓冲效果
+                        seekbarVideo.setSecondaryProgress(0);
+                    }
+
+                    //监听卡
+                    if (!isUseSystem) {
+
+                        if(videoPlayView.isPlaying()){
+                            int buffer = currentPosition - precurrentPosition;
+                            if (buffer < 10) {
+                                //视频卡了
+                                bufferLayout.setVisibility(View.VISIBLE);
+                            } else {
+                                //视频不卡了
+                                bufferLayout.setVisibility(View.GONE);
+                            }
+                        }else{
+                            bufferLayout.setVisibility(View.GONE);
+                        }
+
+                    }
+                    precurrentPosition = currentPosition;
                     handler.removeMessages(PROGRESS);
                     //每秒更新一次
                     handler.sendEmptyMessageDelayed(PROGRESS,20);
@@ -520,6 +591,19 @@ public class VideoPlayActivity extends BaseActivity {
                 case HIDE_MEDIACONTROLLER:
                     //隐藏控制面板
                     controlLayout.setVisibility(View.GONE);
+                    break;
+                case SHOW_SPEED://显示网速
+                    //1.得到网络速度
+                    String netSpeed = utils.getNetSpeed(VideoPlayActivity.this);
+
+                    //显示网络速
+                    loadingTv.setText("玩命加载中..."+netSpeed);
+                    bufferTv.setText("缓存中..."+netSpeed);
+
+                    //2.每两秒更新一次
+                    handler.removeMessages(SHOW_SPEED);
+                    handler.sendEmptyMessageDelayed(SHOW_SPEED, 2000);
+
                     break;
             }
         }

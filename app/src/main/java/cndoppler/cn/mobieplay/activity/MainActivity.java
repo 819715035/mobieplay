@@ -1,9 +1,16 @@
 package cndoppler.cn.mobieplay.activity;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.widget.RadioGroup;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,6 +22,7 @@ import cndoppler.cn.mobieplay.pager.VideoPager;
 import cndoppler.cn.mobieplay.utils.BaseActivity;
 import cndoppler.cn.mobieplay.utils.BaseFragment;
 import cndoppler.cn.mobieplay.utils.BasePager;
+import cndoppler.cn.mobieplay.utils.ToastUtils;
 
 public class MainActivity extends BaseActivity {
 
@@ -28,6 +36,12 @@ public class MainActivity extends BaseActivity {
         pagers.add(new AudioPager(this));
         pagers.add(new NetVideoPager(this));
         pagers.add(new NetAudioPager(this));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                //没有授权
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 0);
+            }
+        }
     }
 
     @Override
@@ -88,5 +102,17 @@ public class MainActivity extends BaseActivity {
             return pager;
         }
         return null;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == 0){
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED){
+
+            }else{
+                ToastUtils.showToastShort(this,"请先授权");
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }
