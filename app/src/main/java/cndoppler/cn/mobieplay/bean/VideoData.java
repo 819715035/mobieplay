@@ -13,6 +13,30 @@ public class VideoData implements Serializable {
     private String artist;
     private String url;
 
+    private String desc;
+
+    private String imageUrl;
+
+    public String getDesc()
+    {
+        return desc;
+    }
+
+    public void setDesc(String desc)
+    {
+        this.desc = desc;
+    }
+
+    public String getImageUrl()
+    {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl)
+    {
+        this.imageUrl = imageUrl;
+    }
+
     public String getName() {
         return name;
     }
