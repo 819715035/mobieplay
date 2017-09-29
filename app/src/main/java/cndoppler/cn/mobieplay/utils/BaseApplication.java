@@ -3,6 +3,8 @@ package cndoppler.cn.mobieplay.utils;
 import android.app.Activity;
 import android.app.Application;
 
+import org.xutils.x;
+
 import java.util.Stack;
 
 /**
@@ -24,6 +26,7 @@ public class BaseApplication extends Application {
         super.onCreate();
 
         application = this;
+        x.Ext.init(this);
         //CrashHandler.getInstance().init(this);
     }
 
