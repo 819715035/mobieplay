@@ -200,6 +200,10 @@ public class VideoPlayActivity extends BaseActivity {
             unregisterReceiver(batteryReceiver);
             batteryReceiver = null;
         }
+        if(handler!=null){
+            handler.removeCallbacksAndMessages(null);
+            handler = null;
+        }
     }
 
     public void setListener(){
