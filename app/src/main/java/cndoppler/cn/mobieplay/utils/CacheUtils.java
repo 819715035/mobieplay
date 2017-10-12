@@ -3,6 +3,8 @@ package cndoppler.cn.mobieplay.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import cndoppler.cn.mobieplay.service.MusicPlayService;
+
 /**
  * 作者：尚硅谷-杨光福 on 2016/7/22 11:54
  * 微信：yangguangfu520
@@ -23,13 +25,13 @@ public class CacheUtils {
 
     }
 
-  /*  *//*
+   /*
     得到播放模式
-     *//*
+     */
     public static int getPlaymode(Context context,String key){
         SharedPreferences sharedPreferences = context.getSharedPreferences("atguigu",Context.MODE_PRIVATE);
-        return sharedPreferences.getInt(key, MusicPlayerService.REPEAT_NORMAL);
-    }*/
+        return sharedPreferences.getInt(key, MusicPlayService.REPEAT_NORMAL);
+    }
 
     /**
      * 保持数据

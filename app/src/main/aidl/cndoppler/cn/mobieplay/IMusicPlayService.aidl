@@ -94,4 +94,9 @@ interface IMusicPlayService {
         * @return
         */
        boolean isPlaying();
+
+        /**
+            * 设置播放进度
+            */
+        void setSeekTo(int progress);
 }
