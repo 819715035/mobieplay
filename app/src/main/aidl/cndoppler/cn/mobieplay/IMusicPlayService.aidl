@@ -99,4 +99,6 @@ interface IMusicPlayService {
             * 设置播放进度
             */
         void setSeekTo(int progress);
+
+        int getAudioSessionId();
 }

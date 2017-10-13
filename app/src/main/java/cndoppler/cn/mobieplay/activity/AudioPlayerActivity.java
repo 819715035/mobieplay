@@ -1,12 +1,17 @@
 package cndoppler.cn.mobieplay.activity;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.AnimationDrawable;
+import android.media.audiofx.Visualizer;
+import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -17,13 +22,20 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import cndoppler.cn.mobieplay.IMusicPlayService;
 import cndoppler.cn.mobieplay.R;
 import cndoppler.cn.mobieplay.service.MusicPlayService;
 import cndoppler.cn.mobieplay.utils.BaseActivity;
 import cndoppler.cn.mobieplay.utils.CacheUtils;
+import cndoppler.cn.mobieplay.utils.LyricUtils;
 import cndoppler.cn.mobieplay.utils.ToastUtils;
 import cndoppler.cn.mobieplay.utils.Utils;
+import cndoppler.cn.mobieplay.widget.BaseVisualizerView;
+import cndoppler.cn.mobieplay.widget.ShowLyricView;
 
 public class AudioPlayerActivity extends BaseActivity implements View.OnClickListener
 {
@@ -40,6 +52,8 @@ public class AudioPlayerActivity extends BaseActivity implements View.OnClickLis
     private Button btnAudioNext;
     private Button btnLyrc;
     private IMusicPlayService musicService;
+    private ShowLyricView showLyricView;
+    private BaseVisualizerView baseVisualizerView;
     private ServiceConnection conn = new ServiceConnection()
     {
         //连接成功
@@ -97,6 +111,7 @@ public class AudioPlayerActivity extends BaseActivity implements View.OnClickLis
     {
         setContentView(R.layout.activity_audio_player);
         utils = new Utils();
+        askPermission();
         registerUpdateReceiver();
     }
 
@@ -116,6 +131,8 @@ public class AudioPlayerActivity extends BaseActivity implements View.OnClickLis
         btnAudioStartPause = findViewById( R.id.btn_audio_start_pause );
         btnAudioNext = findViewById( R.id.btn_audio_next );
         btnLyrc = findViewById( R.id.btn_lyrc );
+        showLyricView = findViewById(R.id.showLyricView);
+        baseVisualizerView = findViewById(R.id.baseVisualizerView);
         btnAudioPlaymode.setOnClickListener( this );
         btnAudioPre.setOnClickListener( this );
         btnAudioStartPause.setOnClickListener( this );
@@ -144,6 +161,7 @@ public class AudioPlayerActivity extends BaseActivity implements View.OnClickLis
                         e.printStackTrace();
                     }
                 }
+                showLyricView.setshowNextLyric(i);
             }
 
             @Override
@@ -187,9 +205,68 @@ public class AudioPlayerActivity extends BaseActivity implements View.OnClickLis
             tvArtist.setText(musicService.getArtist());
             tvName.setText(musicService.getName());
             seekbarAudio.setMax(musicService.getDuration());
+
             playHandler.sendEmptyMessage(UPDATE_MUSIC_TIME);
+            //发消息开始歌词同步
+            showLyric();
+            setupVisualizerFxAndUi();
         } catch (RemoteException e)
         {
+            e.printStackTrace();
+        }
+    }
+
+    private  Visualizer mVisualizer;
+    /**
+     * 生成一个VisualizerView对象，使音频频谱的波段能够反映到 VisualizerView上
+     */
+    private void setupVisualizerFxAndUi()
+    {
+        try {
+            int audioSessionid = musicService.getAudioSessionId();
+            mVisualizer = new Visualizer(audioSessionid);
+            // 参数内必须是2的位数
+            mVisualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
+            // 设置允许波形表示，并且捕获它
+            baseVisualizerView.setVisualizer(mVisualizer);
+            mVisualizer.setEnabled(true);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+    }
+    private void showLyric() {
+        //解析歌词
+        LyricUtils lyricUtils = new LyricUtils();
+
+        try {
+            String path = musicService.getAudioPath();//得到歌曲的绝对路径
+
+            //传歌词文件
+            //mnt/sdcard/audio/beijingbeijing.mp3
+            //mnt/sdcard/audio/beijingbeijing.lrc \Music\Musiclrc
+            path = path.substring(path.lastIndexOf("-")+1,path.lastIndexOf("."));
+            //String musicName = musicService.getName();//得到歌曲名
+            // 取得SD卡文件路径
+            String SDPath = Environment.getExternalStorageDirectory().getAbsolutePath()+"/Music/Musiclrc";
+            //歌词文件路径名
+            String lyricsName = "";
+            File fileLyrics = new File(SDPath);
+            if (fileLyrics.isDirectory()){
+                String[] lyricsPath = fileLyrics.list();
+                for (int i = 0;i<lyricsPath.length;i++){
+                    if (lyricsPath[i].contains(path)){
+                        lyricsName = lyricsPath[i];
+                        break;
+                    }
+                }
+            }
+            File file = new File(SDPath+"/"+lyricsName);
+            lyricUtils.readLyricFile(file);//解析歌词
+
+            showLyricView.setLyrics(lyricUtils.getLyrics());
+
+        } catch (RemoteException e) {
             e.printStackTrace();
         }
     }
@@ -327,6 +404,15 @@ public class AudioPlayerActivity extends BaseActivity implements View.OnClickLis
     }
 
     @Override
+    protected void onPause()
+    {
+        super.onPause();
+        if (mVisualizer!=null){
+            mVisualizer.release();
+        }
+    }
+
+    @Override
     protected void onDestroy()
     {
         super.onDestroy();
@@ -346,6 +432,7 @@ public class AudioPlayerActivity extends BaseActivity implements View.OnClickLis
         public void handleMessage(Message msg)
         {
             switch (msg.what){
+
                 case UPDATE_MUSIC_TIME:
                     try
                     {
@@ -362,5 +449,43 @@ public class AudioPlayerActivity extends BaseActivity implements View.OnClickLis
                     break;
             }
         }
+    }
+
+    List<String> permissions = new ArrayList<String>();
+    private boolean askPermission() {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int RECORD_AUDIO = checkSelfPermission(Manifest.permission.RECORD_AUDIO );
+            if (RECORD_AUDIO != PackageManager.PERMISSION_GRANTED) {
+                permissions.add(Manifest.permission.RECORD_AUDIO);
+            }
+
+            if (!permissions.isEmpty()) {
+                requestPermissions(permissions.toArray(new String[permissions.size()]), 1);
+            } else
+                return false;
+        } else
+            return false;
+        return true;
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == 1) {
+
+            boolean result = true;
+            for (int i = 0; i < permissions.length; i++) {
+                result = result && grantResults[i] == PackageManager.PERMISSION_GRANTED;
+            }
+            if (!result) {
+
+                ToastUtils.showToastShort(this, "授权结果（至少有一项没有授权），result="+result);
+                // askPermission();
+            } else {
+                //授权成功
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 }

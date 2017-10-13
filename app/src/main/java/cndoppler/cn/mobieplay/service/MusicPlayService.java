@@ -201,6 +201,12 @@ public class MusicPlayService extends Service
         {
             musicService.setSeekTo(progress);
         }
+
+        @Override
+        public int getAudioSessionId() throws RemoteException
+        {
+            return musicService.getAudioSessionId();
+        }
     };
 
 
@@ -225,9 +231,9 @@ public class MusicPlayService extends Service
                     @Override
                     public void onPrepared(MediaPlayer mediaPlayer)
                     {
+                        start();
                         //通知activity更新歌名
                         notificationActivity();
-                        start();
                     }
                 });
                 mediaPlay.setOnCompletionListener(new MediaPlayer.OnCompletionListener()
@@ -513,4 +519,8 @@ public class MusicPlayService extends Service
                 break;
         }
     }
+
+    private int getAudioSessionId(){
+        return mediaPlay.getAudioSessionId();
+    };
 }
