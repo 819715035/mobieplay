@@ -210,7 +210,7 @@ public class AudioPlayerActivity extends BaseActivity implements View.OnClickLis
             playHandler.sendEmptyMessage(UPDATE_MUSIC_TIME);
             //发消息开始歌词同步
             showLyric();
-            //setupVisualizerFxAndUi();
+            setupVisualizerFxAndUi();
         } catch (RemoteException e)
         {
             e.printStackTrace();
