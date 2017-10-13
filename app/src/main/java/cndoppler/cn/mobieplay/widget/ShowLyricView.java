@@ -61,14 +61,6 @@ public class ShowLyricView extends TextView
      */
     private void initView(Context context)
     {
-        /*lyrics = new ArrayList<>();
-        for (int i = 0;i < 10000;i++){
-            Lyric lyric = new Lyric();
-            lyric.setContent(i+"aaaaaaaaaaaaaaaaa"+i);
-            lyric.setSleepTime(i*1500);
-            lyric.setTimePoint(i*1000);
-            lyrics.add(lyric);
-        }*/
         textHeight = DensityUtil.dip2px(context,20);
         greenPaint = new Paint();
         greenPaint.setColor(Color.GREEN);
@@ -152,7 +144,7 @@ public class ShowLyricView extends TextView
         if (lyrics==null || lyrics.size()==0){
             return;
         }
-        for (int i =0;i<lyrics.size();i++){
+        for (int i =1;i<lyrics.size();i++){
             if(currentPosition < lyrics.get(i).getTimePoint()){
 
                 int tempIndex = i - 1;
