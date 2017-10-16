@@ -237,7 +237,6 @@ public class AudioPlayerActivity extends BaseActivity implements View.OnClickLis
             mVisualizer.setEnabled(true);
         } catch (Exception e) {
             e.printStackTrace();
-            LogUtils.myE("tag","e======"+e.getMessage());
         }
 
     }
