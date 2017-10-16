@@ -3,12 +3,14 @@ package cndoppler.cn.mobieplay.activity;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Handler;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.view.KeyEvent;
 import android.widget.RadioGroup;
 
 import java.util.ArrayList;
@@ -114,5 +116,31 @@ public class MainActivity extends BaseActivity {
             }
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+    /**
+     * 是否已经退出
+     */
+    private boolean isExit = false;
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            if(position != 0){//不是第一页面
+                position = 0;
+                mainRg.check(R.id.video_rb);//首页
+                return true;
+            }else  if(!isExit){
+                isExit = true;
+                ToastUtils.showToastShort(MainActivity.this,"再按一次推出");
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        isExit  = false;
+                    }
+                },2000);
+                return true;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

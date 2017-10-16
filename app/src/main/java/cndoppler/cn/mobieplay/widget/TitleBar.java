@@ -1,12 +1,14 @@
 package cndoppler.cn.mobieplay.widget;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import cndoppler.cn.mobieplay.R;
+import cndoppler.cn.mobieplay.activity.SearchActivity;
 import cndoppler.cn.mobieplay.utils.ToastUtils;
 
 /**
@@ -36,7 +38,8 @@ public class TitleBar extends LinearLayout{
         findViewById(R.id.search_tv).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                ToastUtils.showToastShort(context,"search");
+                Intent intent = new Intent(context,SearchActivity.class);
+                context.startActivity(intent);
             }
         });
         findViewById(R.id.game_iv).setOnClickListener(new OnClickListener() {

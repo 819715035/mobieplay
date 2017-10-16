@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import cndoppler.cn.mobieplay.IMusicPlayService;
 import cndoppler.cn.mobieplay.R;
 import cndoppler.cn.mobieplay.activity.AudioPlayerActivity;
+
 import cndoppler.cn.mobieplay.bean.VideoData;
 import cndoppler.cn.mobieplay.utils.CacheUtils;
 import cndoppler.cn.mobieplay.utils.ToastUtils;
