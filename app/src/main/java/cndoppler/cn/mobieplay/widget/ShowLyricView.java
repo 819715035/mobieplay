@@ -100,6 +100,9 @@ public class ShowLyricView extends TextView
                 plush = textHeight + moveDistance;
             }
             canvas.translate(0,-plush);
+            if (playPosition>=lyrics.size()){
+                return;
+            }
             canvas.drawText(lyrics.get(playPosition).getContent(),width/2,height/2,greenPaint);
             // 绘制前面部分
             float tempY = height / 2;//Y轴的中间坐标
@@ -142,6 +145,7 @@ public class ShowLyricView extends TextView
     public void setshowNextLyric(int currentPosition) {
         this.currentPositon = currentPosition;
         if (lyrics==null || lyrics.size()==0){
+            playPosition = 0;
             return;
         }
         for (int i =1;i<lyrics.size();i++){

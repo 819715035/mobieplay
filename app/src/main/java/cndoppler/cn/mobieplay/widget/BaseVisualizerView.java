@@ -62,7 +62,7 @@ public class BaseVisualizerView extends View implements Visualizer.OnDataCapture
     private void initView() {
         mPaint = new Paint();
         mPaint.setAntiAlias(true);
-        mPaint.setColor(Color.BLUE);
+        mPaint.setColor(Color.YELLOW);
 //        mPaint.setColor(0xFFd60d25);
         mPaint.setStrokeJoin(Join.ROUND);
         mPaint.setStrokeCap(Cap.ROUND);

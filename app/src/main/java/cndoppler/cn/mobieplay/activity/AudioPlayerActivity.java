@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.AnimationDrawable;
+import android.media.AudioManager;
 import android.media.audiofx.Visualizer;
 import android.os.Build;
 import android.os.Environment;
@@ -21,16 +22,17 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
 import cndoppler.cn.mobieplay.IMusicPlayService;
 import cndoppler.cn.mobieplay.R;
 import cndoppler.cn.mobieplay.service.MusicPlayService;
 import cndoppler.cn.mobieplay.utils.BaseActivity;
 import cndoppler.cn.mobieplay.utils.CacheUtils;
+import cndoppler.cn.mobieplay.utils.LogUtils;
 import cndoppler.cn.mobieplay.utils.LyricUtils;
 import cndoppler.cn.mobieplay.utils.ToastUtils;
 import cndoppler.cn.mobieplay.utils.Utils;
@@ -111,6 +113,7 @@ public class AudioPlayerActivity extends BaseActivity implements View.OnClickLis
     {
         setContentView(R.layout.activity_audio_player);
         utils = new Utils();
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
         askPermission();
         registerUpdateReceiver();
     }
@@ -224,15 +227,17 @@ public class AudioPlayerActivity extends BaseActivity implements View.OnClickLis
     private void setupVisualizerFxAndUi()
     {
         try {
-            int audioSessionid = musicService.getAudioSessionId();
+
+            int audioSessionid =  musicService.getAudioSessionId();
             mVisualizer = new Visualizer(audioSessionid);
             // 参数内必须是2的位数
             mVisualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
             // 设置允许波形表示，并且捕获它
             baseVisualizerView.setVisualizer(mVisualizer);
             mVisualizer.setEnabled(true);
-        } catch (RemoteException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            LogUtils.myE("tag","e======"+e.getMessage());
         }
 
     }
@@ -459,6 +464,8 @@ public class AudioPlayerActivity extends BaseActivity implements View.OnClickLis
             int RECORD_AUDIO = checkSelfPermission(Manifest.permission.RECORD_AUDIO );
             if (RECORD_AUDIO != PackageManager.PERMISSION_GRANTED) {
                 permissions.add(Manifest.permission.RECORD_AUDIO);
+            }else{
+
             }
 
             if (!permissions.isEmpty()) {

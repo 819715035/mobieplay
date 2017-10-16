@@ -205,7 +205,7 @@ public class MusicPlayService extends Service
         @Override
         public int getAudioSessionId() throws RemoteException
         {
-            return musicService.getAudioSessionId();
+            return mediaPlay.getAudioSessionId();
         }
     };
 
@@ -520,7 +520,4 @@ public class MusicPlayService extends Service
         }
     }
 
-    private int getAudioSessionId(){
-        return mediaPlay.getAudioSessionId();
-    };
 }
