@@ -10,11 +10,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Vibrator;
 import android.util.DisplayMetrics;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
@@ -675,14 +677,60 @@ public class VideoPlayActivity extends BaseActivity {
             case MotionEvent.ACTION_MOVE:
                 float endY = event.getY();
                 float spaceY = endY - startY;
-                //音量调节
-                currentAudio = (int) Math.min(tempVolume - spaceY / toundRang * maxAudio, maxAudio);
-                updateVolume();
+                float endX = event.getX();
+                float distanceY = startY - endY;
+                if(endX < screenWidth/2){
+                    //左边屏幕-调节亮度
+                    final double FLING_MIN_DISTANCE = 0.5;
+                    final double FLING_MIN_VELOCITY = 0.5;
+                    if (distanceY > FLING_MIN_DISTANCE
+                            && Math.abs(distanceY) > FLING_MIN_VELOCITY) {
+//                        Log.e(TAG, "up");
+                        setBrightness(20);
+                    }
+                    if (distanceY < FLING_MIN_DISTANCE
+                            && Math.abs(distanceY) > FLING_MIN_VELOCITY) {
+//                        Log.e(TAG, "down");
+                        setBrightness(-20);
+                    }
+                }else{
+                    //音量调节
+                    currentAudio = (int) Math.min(tempVolume - spaceY / toundRang * maxAudio, maxAudio);
+                    updateVolume();
+                }
+
                 break;
             case MotionEvent.ACTION_UP:
                 break;
         }
         return super.onTouchEvent(event);
+    }
+
+    private  Vibrator vibrator;
+    /*
+    /*
+        *
+        * 设置屏幕亮度 lp = 0 全暗 ，lp= -1,根据系统设置， lp = 1; 最亮
+        */
+    public void setBrightness(float brightness) {
+        WindowManager.LayoutParams lp = getWindow().getAttributes();
+        // if (lp.screenBrightness <= 0.1) {
+        // return;
+        // }
+        lp.screenBrightness = lp.screenBrightness + brightness / 255.0f;
+        if (lp.screenBrightness > 1) {
+            lp.screenBrightness = 1;
+            vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+            long[] pattern = { 10, 200 }; // OFF/ON/OFF/ON...
+            vibrator.vibrate(pattern, -1);
+        } else if (lp.screenBrightness < 0.2) {
+            lp.screenBrightness = (float) 0.2;
+            vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+            long[] pattern = { 10, 200 }; // OFF/ON/OFF/ON...
+            vibrator.vibrate(pattern, -1);
+        }
+//        Log.e(TAG, "lp.screenBrightness= " + lp.screenBrightness);
+        getWindow().setAttributes(lp);
     }
 
     @Override

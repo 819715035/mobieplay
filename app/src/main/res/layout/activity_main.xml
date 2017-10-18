@@ -38,6 +38,6 @@
             android:id="@+id/netaudio_rb"
             style="@style/MainRadioButtonStyle"
             android:drawableTop="@drawable/mian_rb_netaudio_selector"
-            android:text="网络音乐"/>
+            android:text="精彩推荐"/>
     </RadioGroup>
 </LinearLayout>
